@@ -2,9 +2,9 @@
   "name": "invoicing-app",
   "version": "1.0.0",
   "description": "Enterprise Management Suite with WooCommerce Sync",
-  "main": "server.js",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node backend/server.js",
     "build": "npm install && npx prisma generate"
   },
   "dependencies": {
