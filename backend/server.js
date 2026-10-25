@@ -36,7 +36,11 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.post('/api/documents/send-test', emailController.sendDocument);
 // Route for sending existing documents by ID
 app.post('/api/documents/:documentId/send', emailController.sendDocument);
-
+app.post(
+  '/api/firebase/documents/:documentId/send-email',
+  authenticateMobileFirebase,
+  mobileEmailController.sendMobileDocument
+);
 // --- PDF ROUTES ---
 // New route for the "Generate PDF" button (Direct Download)
 app.post('/api/documents/generate-dynamic-pdf', pdfController.generateDynamicPDF);
