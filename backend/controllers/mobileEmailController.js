@@ -26,6 +26,16 @@ function amount(value) {
   return `₹${Number(value || 0).toFixed(2)}`;
 }
 
+function formatDocumentDate(value) {
+  const date = value && typeof value.toDate === 'function'
+    ? value.toDate()
+    : new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? ''
+    : date.toLocaleDateString('en-IN');
+}
+
 function createPdf(document, contact, company) {
   return new Promise((resolve, reject) => {
     const pdf = new PDFDocument({ margin: 48 });
@@ -41,7 +51,7 @@ function createPdf(document, contact, company) {
       `${DOCUMENT_LABELS[document.type]} ${document.number || ''}`
     );
     pdf.fontSize(11).text(`To: ${contact.name || ''}`);
-    pdf.text(`Date: ${new Date(document.createdAt).toLocaleDateString('en-IN')}`);
+    pdf.text(`Date: ${formatDocumentDate(document.createdAt)}`);
     pdf.moveDown();
 
     for (const item of document.items || []) {
@@ -64,7 +74,7 @@ function createPdf(document, contact, company) {
 
 exports.sendMobileDocument = async (req, res) => {
   try {
-    if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+    if (!process.env.RESEND_API_KEY) {
       return res.status(503).json({ error: 'Resend is not configured on the server' });
     }
 
@@ -118,7 +128,7 @@ exports.sendMobileDocument = async (req, res) => {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     const result = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL,
+      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
       to: [toEmail],
       subject: `${label} ${document.number} from ${company.name}`,
       html: `
