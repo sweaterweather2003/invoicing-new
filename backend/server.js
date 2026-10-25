@@ -12,7 +12,10 @@ const app = express();
 const emailController = require('./controllers/emailController');
 const pdfController = require('./controllers/pdfController');
 const uploadController = require('./controllers/uploadController');
-
+const mobileEmailController = require('./controllers/mobileEmailController');
+const {
+  authenticateMobileFirebase,
+} = require('./middleware/mobileFirebaseAuth');
 // Middleware
 app.use(cors());
 app.use(express.json());
